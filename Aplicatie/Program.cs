@@ -20,7 +20,38 @@
 
         // proprietate computed – varianta 2 (expresie Lambda)
         public bool EstePoligon_v2 => NrLaturi >= 3;
-
+        public int Perimetru
+        {
+            get
+            {
+                int suma = 0;
+                if (dimensiuniLaturi != null)
+                {
+                    foreach (int latura in dimensiuniLaturi)
+                    {
+                        suma = suma + latura;
+                    }
+                }
+                return suma;
+            }
+        }
+        public string TipFigura
+        {
+            get
+            {
+                switch (NrLaturi)
+                {
+                    case 0: return "Punct";
+                    case 1: return "Linie";
+                    case 2: return "Unghi";
+                    case 3: return "Triunghi";
+                    case 4: return "Patrulater";
+                    case 5: return "Pentagon";
+                    case 6: return "Hexagon";
+                    default: return "Poligon complex";
+                }
+            }
+        }
         public void SetDimensiuniLaturi(int[] _dimensiuniLaturi)
         {
             dimensiuniLaturi = new int[_dimensiuniLaturi.Length];

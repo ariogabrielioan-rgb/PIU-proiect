@@ -1,4 +1,6 @@
-﻿namespace ExempluClase
+﻿using System;
+
+namespace ExempluClase
 {
     class Program
     {
@@ -31,8 +33,16 @@
             Console.WriteLine(figura2AsString);
             Console.WriteLine($"Este poligon? {figura2.EstePoligon}");
 
+            Console.WriteLine("\n--- Runda joc ---");
+            Random rnd = new Random();
+            for (int j = 0; j < 3; j++)
+            {
+                int laturiAleatorii = rnd.Next(0, 7);
+                FiguraGeometrica figuraJoc = new FiguraGeometrica(string.Empty, laturiAleatorii);
+                Console.WriteLine($"S a generat o figura cu {laturiAleatorii} laturi. Sistemul zice: {figuraJoc.TipFigura}");
+            }
+
             Console.ReadKey();
         }
     }
-
 }
