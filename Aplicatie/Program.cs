@@ -54,7 +54,12 @@
         //	sub forma unui sir de caractere
         public string Info()
         {
-            return $"Denumire: {Denumire}, NrLaturi: {NrLaturi}";
+            if (string.IsNullOrEmpty(Denumire))
+            {
+                return "FIGURA NESETATA";
+            }
+            string laturiAfisate = dimensiuniLaturi != null ? string.Join(" ", dimensiuniLaturi) : "";
+            return $"Denumire: {Denumire}, NrLaturi: {NrLaturi}, Laturi: {laturiAfisate}";
         }
 
     }
