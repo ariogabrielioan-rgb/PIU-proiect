@@ -1,46 +1,58 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace ExempluClase
+namespace SistemExamen
 {
     class Program
     {
         static void Main()
         {
-            Console.Write("Introduceti denumirea figurii: ");
-            string numeCitit = Console.ReadLine();
+            // 1. Crearea setului de intrebari 
+            Intrebare q1 = new Intrebare("Care este capitala Romaniei?", "Bucuresti", 5);
+            q1.Id = 1;
 
-            Console.Write("Introduceti numarul de laturi: ");
-            int nrLaturiCitit = int.Parse(Console.ReadLine());
+            Intrebare q2 = new Intrebare("Cat face 5 inmultit cu 5?", "25", 2);
+            q2.Id = 2;
 
-            //	Instantierea unui obiect de tip FiguraGeometrica utilizand constructorul fara parametri
-            //	Tipul variabilei f este 'var' (determinat de compilator)
-            var figur1 = new FiguraGeometrica();
-            string figura1AsString = figur1.Info();
-            Console.WriteLine(figura1AsString);
-            Console.WriteLine($"Este poligon? {figur1.EstePoligon}");
+            Intrebare q3 = new Intrebare("In ce an suntem acum?", "2026", 3);
+            q3.Id = 3;
+            Intrebare q4 = new Intrebare("In ce an suntem acum?", "2025", 3);
+            q3.Id = 4;
+            // Punem intrebarile într-o lista pentru a le parcurge usor
+            List<Intrebare> test = new List<Intrebare> { q1, q2, q3,q4};
 
-            //	Instantierea unui obiect de tip FiguraGeometrica utilizand constructorul cu parametri
-            //	Tipul variabilei f1 este explicit 'FiguraGeometrica'
-            FiguraGeometrica figura2 = new FiguraGeometrica(numeCitit, nrLaturiCitit);
-            int[] laturiIntroduse = new int[nrLaturiCitit];
-            for (int i = 0; i < nrLaturiCitit; i++)
+            int punctajTotal = 0;
+
+            Console.WriteLine("--- INCEPE EXAMENUL ---\n");
+
+            // 2. Parcurgerea testului (Structura repetitivă)
+            foreach (var intrebareCurenta in test)
             {
-                Console.Write($"Introduceti dimensiunea laturii {i + 1}: ");
-                laturiIntroduse[i] = int.Parse(Console.ReadLine());
-            }
-            figura2.SetDimensiuniLaturi(laturiIntroduse);
-            string figura2AsString = figura2.Info();
-            Console.WriteLine(figura2AsString);
-            Console.WriteLine($"Este poligon? {figura2.EstePoligon}");
+                Console.WriteLine(intrebareCurenta.Info());
+                Console.Write("Raspunsul tau: ");
+                string raspunsDat = Console.ReadLine();
 
-            Console.WriteLine("\n--- Runda joc ---");
-            Random rnd = new Random();
-            for (int j = 0; j < 3; j++)
-            {
-                int laturiAleatorii = rnd.Next(0, 7);
-                FiguraGeometrica figuraJoc = new FiguraGeometrica(string.Empty, laturiAleatorii);
-                Console.WriteLine($"S a generat o figura cu {laturiAleatorii} laturi. Sistemul zice: {figuraJoc.TipFigura}");
+                // Verificam daca utilizatorul a ghicit
+                if (intrebareCurenta.Verifica(raspunsDat))
+                {
+                    Console.WriteLine("Corect!");
+                    punctajTotal = punctajTotal + intrebareCurenta.GetPunctaj();
+                }
+                else
+                {
+                    Console.WriteLine("Gresit.");
+                }
+                Console.WriteLine(); // Linie goala pentru aspect
             }
+
+            // 3. Afișarea rezultatului final
+            Console.WriteLine("--- REZULTAT FINAL ---");
+            Console.WriteLine($"Ai obtinut in total: {punctajTotal} puncte.");
+
+            if (punctajTotal >= 5)
+                Console.WriteLine("Status: ADMIS");
+            else
+                Console.WriteLine("Status: RESPINS");
 
             Console.ReadKey();
         }

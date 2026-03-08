@@ -1,97 +1,53 @@
-﻿namespace ExempluClase
+﻿namespace SistemExamen
 {
-    public class FiguraGeometrica
+    public class Intrebare
     {
-        // data membra privata
-        int[] dimensiuniLaturi;
+        // Date membre private
+        private string textIntrebare;
+        private string raspunsCorect;
+        private int punctaj;
 
-        // proprietati auto-implemented
-        public string Denumire { get; set; }
-        public int NrLaturi { get; set; }
+        // Proprietăți auto-implemented
+        public int Id { get; set; }
 
-        // proprietate computed – varianta 1
-        public bool EstePoligon
+        // Proprietate computed pentru a vedea dacă întrebarea este "valoroasa" (peste 5 puncte)
+        public bool EsteImportanta => punctaj > 5;
+
+        // Constructor fără parametri
+        public Intrebare()
         {
-            get
-            {
-                return NrLaturi >= 3;
-            }
+            textIntrebare = string.Empty;
+            raspunsCorect = string.Empty;
+            punctaj = 0;
         }
 
-        // proprietate computed – varianta 2 (expresie Lambda)
-        public bool EstePoligon_v2 => NrLaturi >= 3;
-        public int Perimetru
+        // Constructor cu parametri
+        public Intrebare(string _text, string _raspuns, int _punctaj)
         {
-            get
-            {
-                int suma = 0;
-                if (dimensiuniLaturi != null)
-                {
-                    foreach (int latura in dimensiuniLaturi)
-                    {
-                        suma = suma + latura;
-                    }
-                }
-                return suma;
-            }
-        }
-        public string TipFigura
-        {
-            get
-            {
-                switch (NrLaturi)
-                {
-                    case 0: return "Punct";
-                    case 1: return "Linie";
-                    case 2: return "Unghi";
-                    case 3: return "Triunghi";
-                    case 4: return "Patrulater";
-                    case 5: return "Pentagon";
-                    case 6: return "Hexagon";
-                    default: return "Poligon complex";
-                }
-            }
-        }
-        public void SetDimensiuniLaturi(int[] _dimensiuniLaturi)
-        {
-            dimensiuniLaturi = new int[_dimensiuniLaturi.Length];
-            _dimensiuniLaturi.CopyTo(dimensiuniLaturi, 0);
+            textIntrebare = _text;
+            raspunsCorect = _raspuns;
+            punctaj = _punctaj;
         }
 
-        public int[] GetDimensiuniLaturi()
-        {
-            /* returneaza o copie a vectorului, astfel încât utilizatorii acestei 
-               clase să nu poata modifica în mod direct conținutul vectorului */
-            return (int[])dimensiuniLaturi.Clone();
-        }
-
-
-        //	Constructor fara parametri
-        public FiguraGeometrica()
-        {
-            Denumire = string.Empty;
-            NrLaturi = 0;
-        }
-
-        //	Constructor cu parametri
-        public FiguraGeometrica(string _denumire, int _nrLaturi)
-        {
-            Denumire = _denumire;
-            NrLaturi = _nrLaturi;
-            dimensiuniLaturi = new int[NrLaturi];
-        }
-
-        //	Metoda care returneaza informatiile despre figura geometrica 
-        //	sub forma unui sir de caractere
+        // Metodă care returnează textul întrebării formatat
         public string Info()
         {
-            if (string.IsNullOrEmpty(Denumire))
-            {
-                return "FIGURA NESETATA";
-            }
-            string laturiAfisate = dimensiuniLaturi != null ? string.Join(" ", dimensiuniLaturi) : "";
-            return $"Denumire: {Denumire}, NrLaturi: {NrLaturi}, Laturi: {laturiAfisate}";
+            if (string.IsNullOrEmpty(textIntrebare))
+                return "INTREBARE INCOMPLETA";
+
+            return $"Intrebarea {Id}: {textIntrebare} ({punctaj} puncte)";
         }
 
+        // Metodă pentru verificarea răspunsului
+        public bool Verifica(string raspunsUtilizator)
+        {
+            return raspunsCorect.ToLower() == raspunsUtilizator.ToLower();
+        }
+
+        // Metodă pentru a obține punctajul (getter)
+        public int GetPunctaj()
+        {
+            return punctaj;
+        }
     }
 }
