@@ -1,4 +1,4 @@
-﻿namespace SistemExamen
+﻿namespace Program
 {
     public class Intrebare
     {

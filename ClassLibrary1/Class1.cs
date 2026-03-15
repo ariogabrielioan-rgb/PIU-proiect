@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Program;
 
-namespace SistemExamen
+namespace Main
 {
     class Program
     {
@@ -19,7 +20,7 @@ namespace SistemExamen
             Intrebare q4 = new Intrebare("In ce an suntem acum?", "2025", 3);
             q3.Id = 4;
             // Punem intrebarile într-o lista pentru a le parcurge usor
-            List<Intrebare> test = new List<Intrebare> { q1, q2, q3,q4};
+            List<Intrebare> test = new List<Intrebare> { q1, q2, q3, q4 };
 
             int punctajTotal = 0;
 
