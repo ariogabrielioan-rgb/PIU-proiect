@@ -53,7 +53,7 @@ namespace InterfataUtilizator
                         break;
 
                     case "T":
-                        // Logica ta originala de verificare si punctaj
+                        // Logica de verificare si punctaj
                         int punctajTotal = 0;
                         Console.WriteLine("\n--- EXAMENUL A INCEPUT ---");
                         foreach (var intrebareCurenta in listaIntrebari)
