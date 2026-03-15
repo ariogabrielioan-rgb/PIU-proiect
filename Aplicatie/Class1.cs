@@ -1,8 +1,7 @@
-﻿using System;
+﻿using LibrarieModele; // Folosești numele de mai sus
+using System;
 using System.Collections.Generic;
-using Program;
-
-namespace Main
+namespace InterfataUtilizator
 {
     class Program
     {
