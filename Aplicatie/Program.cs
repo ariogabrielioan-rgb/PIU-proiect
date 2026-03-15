@@ -1,60 +1,73 @@
-﻿using LibrarieModele; // Folosești numele de mai sus
+﻿using LibrarieModele;
 using System;
 using System.Collections.Generic;
+
 namespace InterfataUtilizator
 {
     class Program
     {
         static void Main()
         {
-            // 1. Crearea setului de intrebari 
-            Intrebare q1 = new Intrebare("Care este capitala Romaniei?", "Bucuresti", 5);
-            q1.Id = 1;
+            // Salvarea datelor într-un vector de obiecte 
+            List<Intrebare> test = new List<Intrebare>();
+            string optiune;
 
-            Intrebare q2 = new Intrebare("Cat face 5 inmultit cu 5?", "25", 2);
-            q2.Id = 2;
-
-            Intrebare q3 = new Intrebare("In ce an suntem acum?", "2026", 3);
-            q3.Id = 3;
-            Intrebare q4 = new Intrebare("In ce an suntem acum?", "2025", 3);
-            q3.Id = 4;
-            // Punem intrebarile într-o lista pentru a le parcurge usor
-            List<Intrebare> test = new List<Intrebare> { q1, q2, q3, q4 };
-
-            int punctajTotal = 0;
-
-            Console.WriteLine("--- INCEPE EXAMENUL ---\n");
-
-            // 2. Parcurgerea testului (Structura repetitivă)
-            foreach (var intrebareCurenta in test)
+            do
             {
-                Console.WriteLine(intrebareCurenta.Info());
-                Console.Write("Raspunsul tau: ");
-                string raspunsDat = Console.ReadLine();
+                Console.WriteLine("\n--- MENIU ---");
+                Console.WriteLine("C. Citire date de la tastatura");
+                Console.WriteLine("A. Afisare date din vector");
+                Console.WriteLine("S. Cautare dupa ID");
+                Console.WriteLine("X. Iesire");
+                Console.Write("Alege optiunea: ");
+                optiune = Console.ReadLine().ToUpper();
 
-                // Verificam daca utilizatorul a ghicit
-                if (intrebareCurenta.Verifica(raspunsDat))
+                switch (optiune)
                 {
-                    Console.WriteLine("Corect!");
-                    punctajTotal = punctajTotal + intrebareCurenta.GetPunctaj();
+                    case "C":
+                        // 1. Citirea datelor de la tastatură 
+                        Console.Write("Introduceti textul intrebarii: ");
+                        string text = Console.ReadLine();
+                        Console.Write("Introduceti raspunsul corect: ");
+                        string rasp = Console.ReadLine();
+                        Console.Write("Introduceti punctajul: ");
+                        int pct = int.Parse(Console.ReadLine());
+
+                        Intrebare noua = new Intrebare(text, rasp, pct);
+                        noua.Id = test.Count + 1;
+
+                        // 2. Salvarea datelor în vectorul de obiecte
+                        test.Add(noua);
+                        break;
+
+                    case "A":
+                        // 3. Afișarea datelor dintr-un vector de obiecte
+                        Console.WriteLine("\nIntrebarile din colectie:");
+                        foreach (var intrebare in test)
+                        {
+                            Console.WriteLine(intrebare.Info());
+                        }
+                        break;
+
+                    case "S":
+                        // 4. Căutarea după anumite criterii (ID) 
+                        Console.Write("Introduceti ID-ul cautat: ");
+                        int idCautat = int.Parse(Console.ReadLine());
+                        Intrebare gasita = null;
+
+                        foreach (var i in test)
+                        {
+                            if (i.Id == idCautat)
+                                gasita = i;
+                        }
+
+                        if (gasita != null)
+                            Console.WriteLine("Gasit: " + gasita.Info());
+                        else
+                            Console.WriteLine("Intrebarea nu exista.");
+                        break;
                 }
-                else
-                {
-                    Console.WriteLine("Gresit.");
-                }
-                Console.WriteLine(); // Linie goala pentru aspect
-            }
-
-            // 3. Afișarea rezultatului final
-            Console.WriteLine("--- REZULTAT FINAL ---");
-            Console.WriteLine($"Ai obtinut in total: {punctajTotal} puncte.");
-
-            if (punctajTotal >= 5)
-                Console.WriteLine("Status: ADMIS");
-            else
-                Console.WriteLine("Status: RESPINS");
-
-            Console.ReadKey();
+            } while (optiune != "X");
         }
     }
 }
