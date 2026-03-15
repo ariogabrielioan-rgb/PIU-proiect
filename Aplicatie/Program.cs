@@ -8,16 +8,16 @@ namespace InterfataUtilizator
     {
         static void Main()
         {
-            // Salvarea datelor într-un vector de obiecte 
-            List<Intrebare> test = new List<Intrebare>();
+            List<Intrebare> listaIntrebari = new List<Intrebare>();
             string optiune;
 
             do
             {
-                Console.WriteLine("\n--- MENIU ---");
-                Console.WriteLine("C. Citire date de la tastatura");
-                Console.WriteLine("A. Afisare date din vector");
-                Console.WriteLine("S. Cautare dupa ID");
+                Console.WriteLine("\n--- MENIU SISTEM EXAMEN ---");
+                Console.WriteLine("C. Adauga intrebare (Citire)");
+                Console.WriteLine("A. Vezi toate intrebarile (Afisare)");
+                Console.WriteLine("S. Cauta intrebare dupa ID (Cautare)");
+                Console.WriteLine("T. INCEPE EXAMENUL (Functionalitatea originala)");
                 Console.WriteLine("X. Iesire");
                 Console.Write("Alege optiunea: ");
                 optiune = Console.ReadLine().ToUpper();
@@ -25,46 +25,54 @@ namespace InterfataUtilizator
                 switch (optiune)
                 {
                     case "C":
-                        // 1. Citirea datelor de la tastatură 
-                        Console.Write("Introduceti textul intrebarii: ");
+                        // Citirea datelor de la tastatura 
+                        Console.Write("Text intrebare: ");
                         string text = Console.ReadLine();
-                        Console.Write("Introduceti raspunsul corect: ");
+                        Console.Write("Raspuns corect: ");
                         string rasp = Console.ReadLine();
-                        Console.Write("Introduceti punctajul: ");
+                        Console.Write("Punctaj: ");
                         int pct = int.Parse(Console.ReadLine());
 
                         Intrebare noua = new Intrebare(text, rasp, pct);
-                        noua.Id = test.Count + 1;
-
-                        // 2. Salvarea datelor în vectorul de obiecte
-                        test.Add(noua);
+                        noua.Id = listaIntrebari.Count + 1;
+                        listaIntrebari.Add(noua); // Salvarea in vector
                         break;
 
                     case "A":
-                        // 3. Afișarea datelor dintr-un vector de obiecte
-                        Console.WriteLine("\nIntrebarile din colectie:");
-                        foreach (var intrebare in test)
-                        {
-                            Console.WriteLine(intrebare.Info());
-                        }
+                        // Afisarea datelor 
+                        foreach (var i in listaIntrebari)
+                            Console.WriteLine(i.Info());
                         break;
 
                     case "S":
-                        // 4. Căutarea după anumite criterii (ID) 
-                        Console.Write("Introduceti ID-ul cautat: ");
+                        // Cautarea dupa ID 
+                        Console.Write("ID cautat: ");
                         int idCautat = int.Parse(Console.ReadLine());
-                        Intrebare gasita = null;
+                        foreach (var i in listaIntrebari)
+                            if (i.Id == idCautat) Console.WriteLine("Gasit: " + i.Info());
+                        break;
 
-                        foreach (var i in test)
+                    case "T":
+                        // Logica ta originala de verificare si punctaj
+                        int punctajTotal = 0;
+                        Console.WriteLine("\n--- EXAMENUL A INCEPUT ---");
+                        foreach (var intrebareCurenta in listaIntrebari)
                         {
-                            if (i.Id == idCautat)
-                                gasita = i;
-                        }
+                            Console.WriteLine(intrebareCurenta.Info());
+                            Console.Write("Raspunsul tau: ");
+                            string raspunsDat = Console.ReadLine();
 
-                        if (gasita != null)
-                            Console.WriteLine("Gasit: " + gasita.Info());
-                        else
-                            Console.WriteLine("Intrebarea nu exista.");
+                            if (intrebareCurenta.Verifica(raspunsDat))
+                            {
+                                Console.WriteLine("Corect!");
+                                punctajTotal += intrebareCurenta.GetPunctaj();
+                            }
+                            else
+                            {
+                                Console.WriteLine("Gresit.");
+                            }
+                        }
+                        Console.WriteLine($"\nREZULTAT FINAL: {punctajTotal} puncte.");
                         break;
                 }
             } while (optiune != "X");
