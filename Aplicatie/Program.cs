@@ -1,6 +1,6 @@
 ﻿using LibrarieModele;
+using NivelAccesDate;
 using System;
-using System.Collections.Generic;
 
 namespace InterfataUtilizator
 {
@@ -8,16 +8,21 @@ namespace InterfataUtilizator
     {
         static void Main()
         {
-            List<Intrebare> listaIntrebari = new List<Intrebare>();
+            // Instantiem managerul de date (strat separat)
+            AdministrareIntrebari adminIntrebari = new AdministrareIntrebari();
+
+            // Instantiem configuratia examenului
+            Examen examenCurent = new Examen();
             string optiune;
 
             do
             {
                 Console.WriteLine("\n--- MENIU SISTEM EXAMEN ---");
+                Console.WriteLine($"[Setari active examen: {examenCurent.OptiuniActive}]");
                 Console.WriteLine("C. Adauga intrebare (Citire)");
                 Console.WriteLine("A. Vezi toate intrebarile (Afisare)");
                 Console.WriteLine("S. Cauta intrebare dupa ID (Cautare)");
-                Console.WriteLine("T. INCEPE EXAMENUL (Functionalitatea originala)");
+                Console.WriteLine("T. INCEPE EXAMENUL");
                 Console.WriteLine("X. Iesire");
                 Console.Write("Alege optiunea: ");
                 optiune = Console.ReadLine().ToUpper();
@@ -25,38 +30,52 @@ namespace InterfataUtilizator
                 switch (optiune)
                 {
                     case "C":
-                        // Citirea datelor de la tastatura 
                         Console.Write("Text intrebare: ");
                         string text = Console.ReadLine();
+
                         Console.Write("Raspuns corect: ");
                         string rasp = Console.ReadLine();
+
                         Console.Write("Punctaj: ");
                         int pct = int.Parse(Console.ReadLine());
 
-                        Intrebare noua = new Intrebare(text, rasp, pct);
-                        noua.Id = listaIntrebari.Count + 1;
-                        listaIntrebari.Add(noua); // Salvarea in vector
+                        // Citire enum
+                        Console.Write("Dificultate (0-Usor, 1-Mediu, 2-Greu): ");
+                        int difIndex = int.Parse(Console.ReadLine());
+                        Dificultate dificultate = (Dificultate)difIndex;
+
+                        Intrebare noua = new Intrebare(text, rasp, pct, dificultate);
+                        adminIntrebari.AdaugaIntrebare(noua);
+                        Console.WriteLine("Intrebare salvata cu succes!");
                         break;
 
                     case "A":
-                        // Afisarea datelor 
-                        foreach (var i in listaIntrebari)
+                        foreach (var i in adminIntrebari.GetIntrebari())
                             Console.WriteLine(i.Info());
                         break;
 
                     case "S":
-                        // Cautarea dupa ID 
                         Console.Write("ID cautat: ");
                         int idCautat = int.Parse(Console.ReadLine());
-                        foreach (var i in listaIntrebari)
-                            if (i.Id == idCautat) Console.WriteLine("Gasit: " + i.Info());
+                        var intrebareGasita = adminIntrebari.CautaDupaId(idCautat);
+
+                        if (intrebareGasita != null)
+                            Console.WriteLine("Gasit: " + intrebareGasita.Info());
+                        else
+                            Console.WriteLine("Intrebarea nu a fost gasita.");
                         break;
 
                     case "T":
-                        // Logica de verificare si punctaj
                         int punctajTotal = 0;
                         Console.WriteLine("\n--- EXAMENUL A INCEPUT ---");
-                        foreach (var intrebareCurenta in listaIntrebari)
+
+                        // Exemplu de utilizare a Flags
+                        if (examenCurent.OptiuniActive.HasFlag(SetariExamen.TimpLimitat))
+                        {
+                            Console.WriteLine("Atentie: Timpul este limitat!");
+                        }
+
+                        foreach (var intrebareCurenta in adminIntrebari.GetIntrebari())
                         {
                             Console.WriteLine(intrebareCurenta.Info());
                             Console.Write("Raspunsul tau: ");

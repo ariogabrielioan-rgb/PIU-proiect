@@ -1,5 +1,5 @@
 <Solution>
   <Project Path="Aplicatie/Aplicatie.csproj" />
   <Project Path="ClassLibrary1/LibrarieModele.csproj" />
-  <Project Path="Date/Date.csproj" Id="7bc39b50-51cf-432e-846b-b004bd40136c" />
+  <Project Path="Date/Stocare.csproj" Id="7bc39b50-51cf-432e-846b-b004bd40136c" />
 </Solution>
