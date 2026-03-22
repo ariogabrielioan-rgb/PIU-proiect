@@ -71,7 +71,6 @@ namespace LibrarieModele
     public class Examen
     {
         public SetariExamen OptiuniActive { get; set; }
-
         public Examen()
         {
             // Setăm implicit o opțiune sau mai multe
