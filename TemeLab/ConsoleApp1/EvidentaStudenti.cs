@@ -13,7 +13,6 @@ namespace EvidentaStudenti
             AdministrareStudentiMemorie adminStudenti = new AdministrareStudentiMemorie();
             Student? studentNou = null;
             string optiune;
-
             List<Student> studenti = adminStudenti.GetStudenti();
 
             do
@@ -21,11 +20,10 @@ namespace EvidentaStudenti
                 Console.WriteLine("\nC. Citire informatii student de la tastatura");
                 Console.WriteLine("I. Afisarea informatiilor despre ultimul student introdus");
                 Console.WriteLine("A. Afisare studenti din lista");
-                Console.WriteLine("Z. Afisare studenti fara note din lista");
                 Console.WriteLine("S. Salvare student in lista");
                 Console.WriteLine("X. Inchidere program");
 
-                Console.WriteLine("Alegeti o optiune:");
+                Console.Write("\nAlegeti o optiune: ");
                 optiune = Console.ReadLine()?.ToUpper() ?? string.Empty;
 
                 switch (optiune)
@@ -40,108 +38,73 @@ namespace EvidentaStudenti
                     case "A":
                         AfisareStudenti(studenti);
                         break;
-                    case "Z":
-                        AfisareStudentiFaraNote(studenti);
-                        break;
                     case "S":
                         if (studentNou != null)
                         {
                             adminStudenti.AddStudent(studentNou);
-                            Console.WriteLine("Student salvat.");
+                            Console.WriteLine("Student salvat in memorie.");
                         }
-                        else Console.WriteLine("Studentul nu a fost initializat");
+                        else Console.WriteLine("Studentul nu a fost initializat.");
                         break;
-                    case "X":
-                        return;
-                    default:
-                        Console.WriteLine("Optiune inexistenta");
-                        break;
+                    case "X": return;
                 }
             } while (optiune != "X");
         }
 
         public static Student CitireStudentTastatura()
         {
-            Console.WriteLine("Introduceti numele:");
+            Console.Write("Introduceti numele: ");
             string nume = Console.ReadLine();
 
-            Console.WriteLine("Introduceti prenumele:");
+            Console.Write("Introduceti prenumele: ");
             string prenume = Console.ReadLine();
 
-            Student student = new Student(0, nume, prenume);
+            // Cerinta 1: Citire Grupa
+            Console.Write("Introduceti grupa: ");
+            string grupa = Console.ReadLine();
 
-            // --- Cerinta 1 & 2: Afisare Enum si Tratare Exceptii ---
+            Student student = new Student(0, nume, prenume, grupa);
+
+            // Alegere Program Studiu
             Console.WriteLine("Alegeti Programul de Studiu:");
             foreach (int i in Enum.GetValues(typeof(ProgramStudiu)))
-            {
                 Console.WriteLine($"{i} - {(ProgramStudiu)i}");
-            }
 
             bool succes = false;
             while (!succes)
             {
                 try
                 {
-                    Console.Write("Introduceti optiunea (cifra): ");
-                    string input = Console.ReadLine();
-                    int optiuneProgram = int.Parse(input);
-
+                    Console.Write("Introduceti cifra programului: ");
+                    int optiuneProgram = int.Parse(Console.ReadLine());
                     if (!Enum.IsDefined(typeof(ProgramStudiu), optiuneProgram))
-                        throw new Exception("Codul programului nu exista in lista.");
+                        throw new Exception("Cod inexistent.");
 
                     student.Program = (ProgramStudiu)optiuneProgram;
                     succes = true;
                 }
-                catch (FormatException)
-                {
-                    Console.WriteLine("Eroare: Te rog sa introduci un numar valid.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Eroare: {ex.Message}");
-                }
+                catch { Console.WriteLine("Optiune invalida. Reincercati."); }
             }
-            // -------------------------------------------------------
 
-            Console.WriteLine("Introduceti numarul de note:");
-            int.TryParse(Console.ReadLine(), out int nrNote);
-
-            int[] note = new int[nrNote];
-            for (int i = 0; i < nrNote; i++)
+            Console.Write("Numar de note: ");
+            int.TryParse(Console.ReadLine(), out int nr);
+            int[] note = new int[nr];
+            for (int i = 0; i < nr; i++)
             {
                 Console.Write($"Nota {i + 1}: ");
-                if (int.TryParse(Console.ReadLine(), out int nota))
-                    note[i] = nota;
-                else
-                    note[i] = 0;
+                int.TryParse(Console.ReadLine(), out note[i]);
             }
             student.SetNote(note);
 
             return student;
         }
 
-        public static void AfisareStudent(Student student)
-        {
-            Console.WriteLine(student.Info());
-        }
+        public static void AfisareStudent(Student student) => Console.WriteLine(student.Info());
 
         public static void AfisareStudenti(List<Student> studenti)
         {
-            Console.WriteLine("Studentii sunt:");
-            foreach (Student student in studenti)
-            {
-                AfisareStudent(student);
-            }
-        }
-
-        public static void AfisareStudentiFaraNote(List<Student> studenti)
-        {
-            Console.WriteLine("Studentii fara note (sau < 2 note) sunt:");
-            var studentiSelectati = studenti.Where(student => student.GetNote().Length < 2);
-            foreach (Student student in studentiSelectati)
-            {
-                AfisareStudent(student);
-            }
+            Console.WriteLine("\nLista studenti:");
+            foreach (var s in studenti) AfisareStudent(s);
         }
     }
 }
