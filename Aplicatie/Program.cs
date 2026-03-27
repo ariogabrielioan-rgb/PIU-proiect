@@ -1,6 +1,6 @@
-﻿using LibrarieEnumuri;   // Referință către proiectul cu Enum-uri
-using LibrarieModele;    // Referință către proiectul cu clasele Intrebare și Examen
-using Stocare;           // Referință către proiectul care se ocupă de fișierul text
+﻿using LibrarieEnumuri;
+using LibrarieModele;
+using Stocare;           // Aici avem acum IStocareDate
 using System;
 
 namespace Aplicatie
@@ -9,23 +9,21 @@ namespace Aplicatie
     {
         static void Main()
         {
-            // 1. Inițializăm stocarea (din proiectul Stocare)
-            // Fișierul "intrebari.txt" va fi creat în bin/Debug/...
-            AdministrareIntrebari adminIntrebari = new AdministrareIntrebari(@"..\..\..\..\intrebari.txt");
+            // MODIFICARE: Nu mai instanțiem direct "AdministrareIntrebariFisierText"
+            // Cerem Factory-ului să ne dea "ceva" care respectă contractul IStocareDate
+            IStocareData adminIntrebari = StocareFactory.GetAdministratorStocare();
 
-            // 2. Instanțiem configurația examenului (din proiectul LibrarieModele)
             Examen examenCurent = new Examen();
             string optiune;
 
             do
             {
-                Console.WriteLine("\n--- MENIU SISTEM EXAMEN ---");
-                // Afișăm setările folosind Flags din LibrarieEnumuri
+                Console.WriteLine("\n--- MENIU SISTEM EXAMEN (Structura Laborator) ---");
                 Console.WriteLine($"[Setari active examen: {examenCurent.OptiuniActive}]");
 
                 Console.WriteLine("C. Adauga intrebare (Citire)");
-                Console.WriteLine("A. Vezi toate intrebarile (Afisare din FISIER)");
-                Console.WriteLine("S. Cauta intrebare dupa ID (Cautare in FISIER)");
+                Console.WriteLine("A. Vezi toate intrebarile (Afisare)");
+                Console.WriteLine("S. Cauta intrebare dupa ID (Cautare)");
                 Console.WriteLine("T. INCEPE EXAMENUL");
                 Console.WriteLine("X. Iesire");
                 Console.Write("Alege optiunea: ");
@@ -43,22 +41,21 @@ namespace Aplicatie
                         Console.Write("Punctaj: ");
                         int pct = int.Parse(Console.ReadLine() ?? "0");
 
-                        // Citire enum (din LibrarieEnumuri)
                         Console.Write("Dificultate (0-Usor, 1-Mediu, 2-Greu): ");
                         int difIndex = int.Parse(Console.ReadLine() ?? "0");
                         Dificultate dificultate = (Dificultate)difIndex;
 
-                        // Creăm obiectul și îl trimitem spre salvare în fișier
                         Intrebare noua = new Intrebare(text, rasp, pct, dificultate);
+
+                        // Metoda ramane la fel, dar "adminIntrebari" e acum de tip interfata
                         adminIntrebari.AdaugaIntrebare(noua);
 
-                        Console.WriteLine("Intrebare salvata cu succes in fisier!");
+                        Console.WriteLine("Intrebare salvata cu succes!");
                         break;
 
                     case "A":
-                        // Preluăm lista din proiectul Stocare
                         var listaIntrebari = adminIntrebari.GetIntrebari();
-                        Console.WriteLine("\n--- LISTA INTREBARI DIN FISIER ---");
+                        Console.WriteLine("\n--- LISTA INTREBARI ---");
                         foreach (var i in listaIntrebari)
                         {
                             Console.WriteLine(i.Info());
@@ -68,7 +65,6 @@ namespace Aplicatie
                     case "S":
                         Console.Write("ID cautat: ");
                         int idCautat = int.Parse(Console.ReadLine() ?? "0");
-                        // Folosim metoda de căutare din Stocare
                         var intrebareGasita = adminIntrebari.CautaDupaId(idCautat);
 
                         if (intrebareGasita != null)
@@ -81,7 +77,6 @@ namespace Aplicatie
                         int punctajTotal = 0;
                         Console.WriteLine("\n--- EXAMENUL A INCEPUT ---");
 
-                        // Verificare Flags (din LibrarieEnumuri)
                         if (examenCurent.OptiuniActive.HasFlag(SetariExamen.TimpLimitat))
                         {
                             Console.WriteLine("!! ATENTIE: Timpul este limitat conform setarilor !!");
