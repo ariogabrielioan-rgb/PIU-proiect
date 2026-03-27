@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClassLibrary1\LibrarieModele.csproj" />
+    <ProjectReference Include="..\LibrarieEnumuri\LibrarieEnumuri.csproj" />
   </ItemGroup>
 
 </Project>
