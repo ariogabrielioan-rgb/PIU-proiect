@@ -9,10 +9,10 @@ namespace Aplicatie
         public static IStocareData GetAdministratorStocare()
         {
             // Metoda A: Stocare în fișier text (Activă)
-            //return new AdministrareIntrebariFisierText(CALE_FISIER);
+            return new AdministrareIntrebariFisierText(CALE_FISIER);
 
             // Metoda B: Stocare în memorie (Dezactivată - se folosește pentru teste rapide)
-             return new AdministrareIntrebariMemorie();
+             //return new AdministrareIntrebariMemorie();
         }
     }
 }
