@@ -11,7 +11,7 @@ namespace EvidentaStudenti
         public static void Main()
         {
             // Cerinta: Modificat pentru a folosi administrarea prin FISIER (pentru salvare permanenta)
-            AdministrareStudenti_Fisier adminStudenti = new AdministrareStudenti_Fisier("studenti.txt");
+            AdministrareStudenti_Fisier adminStudenti = new AdministrareStudenti_Fisier(@"..\..\..\studenti.txt");
             Student? studentNou = null;
             string optiune;
 
