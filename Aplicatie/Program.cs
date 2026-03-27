@@ -11,7 +11,7 @@ namespace Aplicatie
         {
             // 1. Inițializăm stocarea (din proiectul Stocare)
             // Fișierul "intrebari.txt" va fi creat în bin/Debug/...
-            AdministrareIntrebari adminIntrebari = new AdministrareIntrebari("intrebari.txt");
+            AdministrareIntrebari adminIntrebari = new AdministrareIntrebari(@"..\..\..\..\intrebari.txt");
 
             // 2. Instanțiem configurația examenului (din proiectul LibrarieModele)
             Examen examenCurent = new Examen();
