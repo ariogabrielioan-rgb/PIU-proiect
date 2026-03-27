@@ -14,14 +14,14 @@ namespace LibrarieModele
     public class Student
     {
         private const char SEPARATOR_AFISARE = ' ';
-        private const char SEPARATOR_FISIER = ';'; // Separator pentru salvarea in fisier
+        private const char SEPARATOR_FISIER = ';';
 
         private int[] note;
 
         public int IdStudent { get; set; }
         public string Nume { get; set; }
         public string Prenume { get; set; }
-        public string Grupa { get; set; } // Cerința 1: Noua caracteristică
+        public string Grupa { get; set; } // Cerința 1
         public ProgramStudiu Program { get; set; }
 
         public double Medie
@@ -48,33 +48,37 @@ namespace LibrarieModele
             note = new int[0];
         }
 
-        // Cerința 2: Constructor pentru preluare date din fișier (string)
+        // Cerința 3: Constructor actualizat pentru extragere ProgramStudiu și Grupa
         public Student(string linieFisier)
         {
             var dateFisier = linieFisier.Split(SEPARATOR_FISIER);
 
-            IdStudent = int.Parse(dateFisier[0]);
-            Nume = dateFisier[1];
-            Prenume = dateFisier[2];
-
-            // Extragere ProgramStudiu (Cerinta 2)
-            Program = (ProgramStudiu)Enum.Parse(typeof(ProgramStudiu), dateFisier[3]);
-
-            // Extragere Grupa (Cerinta 1)
-            Grupa = dateFisier[4];
-
-            // Extragere Note (dacă există în fișier pe poziția 5)
-            if (dateFisier.Length > 5 && !string.IsNullOrEmpty(dateFisier[5]))
+            // Verificare lungime array pentru a evita erori la linii malformate
+            if (dateFisier.Length >= 5)
             {
-                note = dateFisier[5].Split(',').Select(int.Parse).ToArray();
-            }
-            else
-            {
-                note = new int[0];
+                IdStudent = int.Parse(dateFisier[0]);
+                Nume = dateFisier[1];
+                Prenume = dateFisier[2];
+
+                // Extragere ProgramStudiu (Cerința 3)
+                Program = (ProgramStudiu)Enum.Parse(typeof(ProgramStudiu), dateFisier[3]);
+
+                // Extragere Grupa (Cerința 1)
+                Grupa = dateFisier[4];
+
+                // Extragere Note (poziția 5)
+                if (dateFisier.Length > 5 && !string.IsNullOrEmpty(dateFisier[5]))
+                {
+                    note = dateFisier[5].Split(',').Select(int.Parse).ToArray();
+                }
+                else
+                {
+                    note = new int[0];
+                }
             }
         }
 
-        // Cerința 2: Metoda pentru scrierea în fișier
+        // Cerința 2: Metodă actualizată pentru scrierea ProgramStudiu în fișier
         public string ConversieLaSirPentruFisier()
         {
             string sNote = string.Join(",", note ?? new int[0]);
@@ -83,10 +87,10 @@ namespace LibrarieModele
             return string.Format("{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}",
                 SEPARATOR_FISIER,
                 IdStudent,
-                (Nume ?? " "),
-                (Prenume ?? " "),
+                (Nume ?? string.Empty),
+                (Prenume ?? string.Empty),
                 (int)Program,
-                (Grupa ?? " "),
+                (Grupa ?? string.Empty),
                 sNote);
         }
 
@@ -95,7 +99,7 @@ namespace LibrarieModele
             note = (_note != null) ? (int[])_note.Clone() : new int[0];
         }
 
-        public int[] GetNote() => (int[])note.Clone();
+        public int[] GetNote() => (int[])note?.Clone() ?? new int[0];
 
         public string Info()
         {
