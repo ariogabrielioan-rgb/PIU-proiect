@@ -19,10 +19,11 @@
            FontSize="18" 
            FontStyle="Italic" />
 
-            <Label Content="Text standard" 
-           Foreground="Gray" 
-           FontSize="14" 
-           FontFamily="Courier New" />
+            <Label Content="Text elegant și înclinat" 
+       FontFamily="Times New Roman" 
+       FontStyle="Italic" 
+       FontSize="22" 
+       Foreground="DarkSlateBlue" />
 
         </StackPanel>
     </Grid>
