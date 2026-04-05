@@ -2,25 +2,27 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Laborator WPF" 
-        Height="450" Width="800"
-        WindowState="Maximized">
+        Height="200" Width="800"
+        WindowState="Maximized"
+        WindowStyle="ToolWindow"
+        Background="AliceBlue">
     <Grid>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Label Content="Titlu Principal" 
+           Foreground="DarkBlue" 
+           FontFamily="Verdana" 
+           FontSize="28" 
+           FontWeight="Bold" />
 
-            <Label Content="Primul Label" 
-                   FontSize="20" 
-                   Foreground="Blue" 
-                   HorizontalAlignment="Center"/>
+            <Label Content="Subtitlu cursiv" 
+           Foreground="#FF5733" 
+           FontSize="18" 
+           FontStyle="Italic" />
 
-            <Label Content="Al doilea Label (Mijloc)" 
-                   FontSize="20" 
-                   Foreground="Red" 
-                   HorizontalAlignment="Center"
-                   Margin="0,10,0,10"/>
-            <Label Content="Al treilea Label" 
-                   FontSize="20" 
-                   Foreground="Green" 
-                   HorizontalAlignment="Center"/>
+            <Label Content="Text standard" 
+           Foreground="Gray" 
+           FontSize="14" 
+           FontFamily="Courier New" />
 
         </StackPanel>
     </Grid>
