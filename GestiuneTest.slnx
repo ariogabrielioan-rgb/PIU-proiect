@@ -2,5 +2,6 @@
   <Project Path="Aplicatie/Aplicatie.csproj" />
   <Project Path="ClassLibrary1/LibrarieModele.csproj" />
   <Project Path="Date/Stocare.csproj" Id="7bc39b50-51cf-432e-846b-b004bd40136c" />
+  <Project Path="Interface/Interface.csproj" Id="624587f0-d9eb-4151-84bf-63aa3ecbe797" />
   <Project Path="LibrarieEnumuri/LibrarieEnumuri.csproj" Id="faa87fa5-0976-4d4e-a932-4f94c19bd2da" />
 </Solution>
