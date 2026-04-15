@@ -12,14 +12,8 @@
         <Label Content="Note:" HorizontalAlignment="Left" Margin="30,110,0,0" VerticalAlignment="Top" Width="80"/>
         <TextBox x:Name="txtNote" HorizontalAlignment="Left" Margin="120,114,0,0" VerticalAlignment="Top" Width="150" Height="23"/>
 
-        <Button x:Name="btnAdauga" 
-                Content="Adaugă Student" 
-                HorizontalAlignment="Left" 
-                Margin="120,160,0,0" 
-                VerticalAlignment="Top" 
-                Width="110" 
-                Height="30" 
-                Click="btnAdauga_Click"/>
+        <Button x:Name="btnAdauga" Content="Adaugă Student" HorizontalAlignment="Left" Margin="120,160,0,0" VerticalAlignment="Top" Width="110" Height="30" Click="btnAdauga_Click"/>
+        <Button x:Name="btnReset" Content="Reset" HorizontalAlignment="Left" Margin="30,160,0,0" VerticalAlignment="Top" Width="75" Height="30" Click="btnReset_Click"/>
 
         <Label x:Name="lblNrStudenti" Content="Nr. Studenți:" HorizontalAlignment="Left" Height="36" Margin="320,30,0,0" VerticalAlignment="Top" Width="137"/>
         <Label x:Name="lblStudenti" Content="Informații Studenți" HorizontalAlignment="Left" Height="150" Margin="320,70,0,0" VerticalAlignment="Top" Width="400" Background="#FFF0F0F0"/>

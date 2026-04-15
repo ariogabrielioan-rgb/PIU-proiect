@@ -1,73 +1,144 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq; // Necesar pentru .Select și .Join
+using System.Linq;
 using System.Windows;
-using LibrarieModele;
-using NivelStocareDate;
+using System.Windows.Media;
+using LibrarieModele;   // Referința către clasa Student
+using NivelStocareDate; // Referința către StocareFactory
 
 namespace NivelUIWPF
 {
+    [Flags]
+    public enum CodEroare
+    {
+        TOTUL_OK = 0,
+        NUME_INCORECT = 1,
+        PRENUME_INCORECT = 2,
+        NOTE_INCORECTE = 4,
+        LUNGIME_NUME_MARE = 8,
+        LUNGIME_PRENUME_MARE = 16
+    }
+
     public partial class MainWindow : Window
     {
-        // 1. Declarăm variabila la nivel de clasă
         IStocareData adminStudenti;
+        private readonly Color CULOARE_OK = Colors.Gray;
 
         public MainWindow()
         {
             InitializeComponent();
-
-            // 2. Inițializăm stocarea
             adminStudenti = StocareFactory.GetAdministratorStocare();
-
-            // 3. Afișăm datele inițiale
             AfiseazaStudenti();
         }
 
-        // Metodă pentru butonul "Adaugă"
         private void btnAdauga_Click(object sender, RoutedEventArgs e)
         {
-            // Preluăm datele din interfață
             string nume = txtNume.Text;
             string prenume = txtPrenume.Text;
-            string note = txtNote.Text;
+            string noteString = txtNote.Text;
 
-            // Validare simplă
-            if (string.IsNullOrWhiteSpace(nume) || string.IsNullOrWhiteSpace(prenume))
+            // 1. Validare
+            CodEroare codValidare = Validare(nume, prenume, noteString);
+
+            if (codValidare != CodEroare.TOTUL_OK)
             {
-                MessageBox.Show("Numele și prenumele sunt obligatorii!");
+                MarcheazaControaleInvalide(codValidare);
                 return;
             }
 
-            // Creăm obiectul Student
-            // Notă: Verifică dacă constructorul tău acceptă aceste argumente
-            Student studentNou = new Student(0,nume, prenume);
+            ReseteazaCuloriControale();
 
-            // Dacă ai o metodă sau proprietate pentru note în clasa Student, o apelăm aici:
-            // studentNou.Note = note; 
+            try
+            {
+                // 2. Creare obiect folosind constructorul cu parametri
+                Student studentNou = new Student(0, nume, prenume);
 
-            // Salvăm studentul prin nivelul de stocare
-            adminStudenti.AddStudent(studentNou);
+                // 3. Conversie Note (String -> int[]) pentru metoda SetNote din clasa ta
+                int[] noteArray = noteString.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                           .Select(int.Parse)
+                                           .ToArray();
 
-            // Curățăm câmpurile după salvare
-            txtNume.Clear();
-            txtPrenume.Clear();
-            txtNote.Clear();
+                // Apelăm metoda SetNote din clasa Student pusă de tine
+                studentNou.SetNote(noteArray);
 
-            // Refresh la listă pentru a vedea noul student
-            AfiseazaStudenti();
+                // 4. Salvare
+                adminStudenti.AddStudent(studentNou);
 
-            MessageBox.Show("Studentul a fost adăugat!");
+                // 5. Resetare interfață
+                txtNume.Clear();
+                txtPrenume.Clear();
+                txtNote.Clear();
+
+                AfiseazaStudenti();
+                MessageBox.Show("Studentul a fost adăugat!");
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Notele trebuie să fie numere (ex: 9 10 7).");
+                txtNote.BorderBrush = Brushes.Red;
+            }
         }
 
-        // Mutăm logica de afișare aici pentru a fi reutilizabilă
+        private CodEroare Validare(string nume, string prenume, string note)
+        {
+            CodEroare rezultat = CodEroare.TOTUL_OK;
+
+            if (string.IsNullOrWhiteSpace(nume)) rezultat |= CodEroare.NUME_INCORECT;
+            else if (nume.Length > 15) rezultat |= CodEroare.LUNGIME_NUME_MARE;
+
+            if (string.IsNullOrWhiteSpace(prenume)) rezultat |= CodEroare.PRENUME_INCORECT;
+            else if (prenume.Length > 15) rezultat |= CodEroare.LUNGIME_PRENUME_MARE;
+
+            if (string.IsNullOrWhiteSpace(note)) rezultat |= CodEroare.NOTE_INCORECTE;
+
+            return rezultat;
+        }
+
+        private void MarcheazaControaleInvalide(CodEroare cod)
+        {
+            ReseteazaCuloriControale();
+            if ((cod & CodEroare.NUME_INCORECT) != 0 || (cod & CodEroare.LUNGIME_NUME_MARE) != 0) txtNume.BorderBrush = Brushes.Red;
+            if ((cod & CodEroare.PRENUME_INCORECT) != 0 || (cod & CodEroare.LUNGIME_PRENUME_MARE) != 0) txtPrenume.BorderBrush = Brushes.Red;
+            if ((cod & CodEroare.NOTE_INCORECTE) != 0) txtNote.BorderBrush = Brushes.Red;
+        }
+
+        private void ReseteazaCuloriControale()
+        {
+            txtNume.BorderBrush = new SolidColorBrush(CULOARE_OK);
+            txtPrenume.BorderBrush = new SolidColorBrush(CULOARE_OK);
+            txtNote.BorderBrush = new SolidColorBrush(CULOARE_OK);
+        }
+
+        private void btnReset_Click(object sender, RoutedEventArgs e)
+        {
+            ReseteazaCuloriControale();
+            List<Student> studenti = adminStudenti.GetStudenti();
+
+            if (studenti != null && studenti.Count > 0)
+            {
+                Student ultimul = studenti.Last();
+
+                // Folosim metoda Info() pe care o ai deja în clasă pentru afișare
+                lblStudenti.Content = "Ultimul adăugat:\n" + ultimul.Info();
+
+                txtNume.Clear();
+                txtPrenume.Clear();
+                txtNote.Clear();
+            }
+            else
+            {
+                lblStudenti.Content = "Nu există studenți în fișier.";
+            }
+        }
+
         private void AfiseazaStudenti()
         {
             List<Student> studenti = adminStudenti.GetStudenti();
+            lblNrStudenti.Content = $"Nr. Studenți: {studenti.Count}";
 
-            lblNrStudenti.Content = $"Numar studenti: {studenti.Count}";
-
+            // Folosim metoda Info() pentru fiecare student din listă
             lblStudenti.Content = "Studenti:\n" + string.Join("\n",
-                studenti.Select(s => $"{s.IdStudent}: {s.Nume} {s.Prenume}"));
+                studenti.Select(s => s.Info()));
         }
     }
 }
