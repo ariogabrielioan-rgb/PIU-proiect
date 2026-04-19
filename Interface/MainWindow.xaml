@@ -1,48 +1,46 @@
 ﻿<Window x:Class="Interface.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Quiz Game" Height="500" Width="450">
+        Title="Gestiune Test" Height="500" Width="512" WindowStartupLocation="CenterScreen">
     <Grid Margin="20">
+
         <StackPanel x:Name="pnlMeniu" VerticalAlignment="Center">
-            <Button Content="ADĂUGARE ÎNTREBARE" Click="BtnNavAdaugare_Click" Margin="0,10" Height="50" Background="#E3F2FD"/>
-            <Button Content="PREIA TEST" Click="BtnNavQuiz_Click" Margin="0,10" Height="50" Background="#E8F5E9"/>
+            <Label Content="MENIU PRINCIPAL" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+            <Button Content="ADĂUGARE ÎNTREBARE" Click="BtnNavAdaugare_Click" Margin="0,10" Height="50" Background="#E3F2FD" Cursor="Hand"/>
+            <Button Content="PREIA TEST" Click="BtnNavQuiz_Click" Margin="0,10" Height="50" Background="#E8F5E9" Cursor="Hand"/>
         </StackPanel>
 
         <StackPanel x:Name="pnlAdaugare" Visibility="Collapsed">
-            <Button Content="← Înapoi" Click="BtnBack_Click" HorizontalAlignment="Left" Margin="0,0,0,10"/>
-
-            <Label Content="Text Întrebare:"/>
-            <TextBox x:Name="txtAddText" Margin="0,5"/>
-
-            <Label Content="Răspuns Corect:"/>
-            <TextBox x:Name="txtAddRaspuns" Margin="0,5"/>
-
-            <Label Content="Punctaj:"/>
-            <TextBox x:Name="txtAddPunctaj" Margin="0,5"/>
-
+            <Button Content="← Înapoi" Click="BtnBack_Click" HorizontalAlignment="Left" Margin="0,0,0,10" Background="Transparent"/>
+            <Label x:Name="lblLgText" Content="Text Întrebare:"/>
+            <TextBox x:Name="txtAddText" Margin="0,5" Padding="3"/>
+            <Label x:Name="lblLgRaspuns" Content="Răspuns Corect:"/>
+            <TextBox x:Name="txtAddRaspuns" Margin="0,5" Padding="3"/>
+            <Label x:Name="lblLgPunctaj" Content="Punctaj (1-100):"/>
+            <TextBox x:Name="txtAddPunctaj" Margin="0,5" Padding="3"/>
             <Label Content="Dificultate:"/>
-            <ComboBox x:Name="cmbDificultate" Margin="0,5">
+            <ComboBox x:Name="cmbDificultate" Margin="0,5" Padding="5">
                 <ComboBoxItem Content="Ușor" IsSelected="True"/>
                 <ComboBoxItem Content="Mediu"/>
                 <ComboBoxItem Content="Greu"/>
             </ComboBox>
-
-            <Button Content="Salvează Întrebarea" Click="BtnSalveazaIntrebare_Click" Margin="0,20" Padding="10" Background="#C8E6C9"/>
+            <Button Content="Salvează" Click="BtnSalveazaIntrebare_Click" Margin="0,20" Padding="10" Background="#C8E6C9" FontWeight="Bold"/>
         </StackPanel>
 
         <StackPanel x:Name="pnlQuiz" Visibility="Collapsed">
-            <Button Content="← Abandon" Click="BtnBack_Click" HorizontalAlignment="Left" Margin="0,0,0,10"/>
-
-            <Label x:Name="lblId" FontSize="14" FontWeight="Bold"/>
-            <TextBlock x:Name="txtTextIntrebare" FontSize="16" TextWrapping="Wrap" Margin="0,10"/>
-            <Label x:Name="lblDificultate" FontStyle="Italic"/>
-
-            <Label Content="Răspunsul tău:" Margin="0,10,0,0"/>
-            <TextBox x:Name="txtRaspunsUtilizator" Margin="0,5" Padding="5"/>
-
-            <Button x:Name="btnNext" Content="Trimite Răspuns" Click="btnNext_Click" Margin="0,10" Padding="10"/>
-            <Label x:Name="lblFeedback" HorizontalAlignment="Center" FontWeight="Bold"/>
-            <Label x:Name="lblScorLive" Content="Scor: 0" HorizontalAlignment="Right" FontWeight="Bold" Foreground="Blue"/>
+            <Grid>
+                <Button Content="← Abandon" Click="BtnBack_Click" HorizontalAlignment="Left" Margin="0,0,0,10" Background="Transparent"/>
+                <Label x:Name="lblScorLive" Content="Scor: 0" HorizontalAlignment="Right" FontWeight="Bold" Foreground="Blue" FontSize="14"/>
+            </Grid>
+            <Separator Margin="0,5"/>
+            <Label x:Name="lblId" FontSize="12" Foreground="Gray"/>
+            <TextBlock x:Name="txtTextIntrebare" FontSize="18" TextWrapping="Wrap" Margin="0,15" MinHeight="60"/>
+            <Label x:Name="lblDificultate" FontStyle="Italic" Foreground="#555"/>
+            <Label Content="Răspunsul tău:" Margin="0,20,0,0" FontWeight="Bold"/>
+            <TextBox x:Name="txtRaspunsUtilizator" Margin="0,5" Padding="8" FontSize="14"/>
+            <Button x:Name="btnNext" Content="Trimite Răspuns" Click="btnNext_Click" Margin="0,15" Padding="12" Background="#FFF9C4" FontWeight="Bold"/>
+            <Label x:Name="lblFeedback" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold"/>
         </StackPanel>
+
     </Grid>
 </Window>

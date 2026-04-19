@@ -3,3 +3,4 @@
 3;text;text;3;2
 4;cine e;eu;2;2
 5;a;b;2;1
+6;cine sunt;ce;10;0
