@@ -12,10 +12,6 @@ namespace Interface
 {
     public partial class MainWindow : Window
     {
-        private const int MIN_LUNGIME_TEXT = 5;
-        private const int MIN_PUNCTAJ = 1;
-        private const int MAX_PUNCTAJ = 100;
-
         IStocareData adminIntrebari;
         List<Intrebare> listaIntrebari;
         int indexCurent = 0;
@@ -27,130 +23,118 @@ namespace Interface
             adminIntrebari = StocareFactory.GetAdministratorStocare();
         }
 
+        // --- NAVIGARE ---
         private void BtnNavAdaugare_Click(object sender, RoutedEventArgs e) => SchimbaPanel(pnlAdaugare);
+        private void BtnBack_Click(object sender, RoutedEventArgs e) => SchimbaPanel(pnlMeniu);
 
         private void BtnNavQuiz_Click(object sender, RoutedEventArgs e)
         {
             listaIntrebari = adminIntrebari.GetIntrebari();
             if (listaIntrebari == null || listaIntrebari.Count == 0)
             {
-                MessageBox.Show("Nu există întrebări! Adaugă una mai întâi.");
+                MessageBox.Show("Nu există întrebări!");
                 return;
             }
 
             indexCurent = 0;
             scorCurent = 0;
-            lblScorLive.Content = "Scor: 0"; // Resetare vizuală scor
-
+            lblScorLive.Content = "Scor: 0";
             SchimbaPanel(pnlQuiz);
             AfiseazaIntrebareaCurenta();
         }
 
-        private void BtnBack_Click(object sender, RoutedEventArgs e) => SchimbaPanel(pnlMeniu);
-
         private void SchimbaPanel(FrameworkElement panelActiv)
         {
-            pnlMeniu.Visibility = Visibility.Collapsed;
-            pnlAdaugare.Visibility = Visibility.Collapsed;
-            pnlQuiz.Visibility = Visibility.Collapsed;
+            pnlMeniu.Visibility = pnlAdaugare.Visibility = pnlQuiz.Visibility = Visibility.Collapsed;
             panelActiv.Visibility = Visibility.Visible;
         }
 
+        // --- ADAUGARE (LOGICA SIMPLĂ) ---
         private void BtnSalveazaIntrebare_Click(object sender, RoutedEventArgs e)
         {
-            lblLgText.Foreground = Brushes.Black;
-            lblLgRaspuns.Foreground = Brushes.Black;
-            lblLgPunctaj.Foreground = Brushes.Black;
-
-            string erori = "";
-
-            if (string.IsNullOrWhiteSpace(txtAddText.Text) || txtAddText.Text.Length < MIN_LUNGIME_TEXT)
+            // 1. Verificăm textul întrebării
+            if (string.IsNullOrWhiteSpace(txtAddText.Text))
             {
-                erori += $"- Textul trebuie să aibă minim {MIN_LUNGIME_TEXT} caractere.\n";
-                lblLgText.Foreground = Brushes.Red;
+                MessageBox.Show("Eroare: Trebuie să introduci textul întrebării!");
+                return; // Oprim aici dacă e gol
             }
 
+            // 2. Verificăm răspunsul
             if (string.IsNullOrWhiteSpace(txtAddRaspuns.Text))
             {
-                erori += "- Răspunsul nu poate fi gol.\n";
-                lblLgRaspuns.Foreground = Brushes.Red;
+                MessageBox.Show("Eroare: Trebuie să introduci un răspuns corect!");
+                return; // Oprim aici dacă e gol
             }
 
-            if (!int.TryParse(txtAddPunctaj.Text, out int punctaj) || punctaj < MIN_PUNCTAJ || punctaj > MAX_PUNCTAJ)
+            // 3. Verificăm punctajul (să nu fie gol)
+            if (string.IsNullOrWhiteSpace(txtAddPunctaj.Text))
             {
-                erori += $"- Punctajul trebuie să fie între {MIN_PUNCTAJ} și {MAX_PUNCTAJ}.\n";
-                lblLgPunctaj.Foreground = Brushes.Red;
-            }
-
-            if (!string.IsNullOrEmpty(erori))
-            {
-                MessageBox.Show(erori, "Erori de validare", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Eroare: Trebuie să introduci un punctaj!");
                 return;
             }
+            // 2. Aflăm dificultatea din RadioButtons (Am lăsat-o aici ca să fie clar)
+            Dificultate dif = Dificultate.Usor;
+            if (rbMediu.IsChecked == true) dif = Dificultate.Mediu;
+            if (rbGreu.IsChecked == true) dif = Dificultate.Greu;
 
             try
             {
-                Dificultate dif = (Dificultate)cmbDificultate.SelectedIndex;
+                int punctaj = int.Parse(txtAddPunctaj.Text);
                 Intrebare noua = new Intrebare(txtAddText.Text, txtAddRaspuns.Text, punctaj, dif);
                 adminIntrebari.AdaugaIntrebare(noua);
 
-                MessageBox.Show("Întrebare adăugată cu succes!");
+                MessageBox.Show("Salvat!");
+
+                // Resetăm câmpurile
                 txtAddText.Clear();
                 txtAddRaspuns.Clear();
                 txtAddPunctaj.Clear();
+                rbUsor.IsChecked = true;
             }
-            catch (Exception ex) { MessageBox.Show("Eroare: " + ex.Message); }
+            catch { MessageBox.Show("Punctajul trebuie să fie un număr!"); }
         }
 
+        // --- QUIZ (LOGICA SIMPLĂ CU VALIDARE) ---
         private void btnNext_Click(object sender, RoutedEventArgs e)
         {
+            // VALIDARE: Dacă nu a scris nimic, dăm eroare și oprim funcția
             if (string.IsNullOrWhiteSpace(txtRaspunsUtilizator.Text))
             {
-                lblFeedback.Content = "Introdu un răspuns!";
-                lblFeedback.Foreground = Brushes.OrangeRed;
-                return;
+                MessageBox.Show("Trebuie să introduci un răspuns înainte de a trimite!");
+                return; // "return" oprește funcția aici, deci nu trece la restul codului
             }
 
-            var intrebareActuala = listaIntrebari[indexCurent];
+            var intrebare = listaIntrebari[indexCurent];
 
-            if (intrebareActuala.Verifica(txtRaspunsUtilizator.Text))
+            // Verificăm dacă răspunsul e corect
+            if (intrebare.Verifica(txtRaspunsUtilizator.Text))
             {
-                scorCurent += intrebareActuala.Punctaj;
-                lblFeedback.Content = $"Corect! (+{intrebareActuala.Punctaj} pct)";
-                lblFeedback.Foreground = Brushes.Green;
+                scorCurent += intrebare.Punctaj;
+                MessageBox.Show("Corect!✅ ");
             }
             else
             {
-                lblFeedback.Content = $"Greșit! (Corect: {intrebareActuala.RaspunsCorect})";
-                lblFeedback.Foreground = Brushes.Red;
+                MessageBox.Show($"Greșit!❌ Răspunsul corect era: {intrebare.RaspunsCorect}");
             }
 
-            MessageBox.Show(lblFeedback.Content.ToString());
+            // Abia după ce a răspuns valid, trecem la următoarea
             indexCurent++;
             AfiseazaIntrebareaCurenta();
         }
-
         private void AfiseazaIntrebareaCurenta()
         {
             if (indexCurent < listaIntrebari.Count)
             {
                 var i = listaIntrebari[indexCurent];
-
-                // Aici am scos "| Scor: {scorCurent}"
                 lblId.Content = $"Întrebarea {indexCurent + 1} / {listaIntrebari.Count}";
-
-                // Actualizăm scorul doar în colț
                 lblScorLive.Content = $"Scor: {scorCurent}";
-
                 txtTextIntrebare.Text = i.Text;
-                lblDificultate.Content = $"Dificultate: {i.NivelDificultate} | Puncte: {i.Punctaj}";
+                lblDificultate.Content = $"Dificultate: {i.NivelDificultate}";
                 txtRaspunsUtilizator.Clear();
-                lblFeedback.Content = "";
             }
             else
             {
-                int punctajTotal = listaIntrebari.Sum(x => x.Punctaj);
-                MessageBox.Show($"Test finalizat!\nScor final: {scorCurent} / {punctajTotal} puncte.", "Rezultat Test");
+                MessageBox.Show($"Gata! Scor final: {scorCurent}");
                 SchimbaPanel(pnlMeniu);
             }
         }

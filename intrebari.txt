@@ -4,3 +4,5 @@
 4;cine e;eu;2;2
 5;a;b;2;1
 6;cine sunt;ce;10;0
+7;aadsadasd;e;11;2
+8;CIne a fost;mihai;10;0

@@ -7,7 +7,7 @@ namespace LibrarieEnumuri
     {
         Usor = 0,
         Mediu = 1,
-        Greu = 2
+        Greu = 2,
     }
 
     // Cerința: Enums pentru setări examen (folosim [Flags] pentru a permite combinarea lor)

@@ -18,12 +18,12 @@
             <TextBox x:Name="txtAddRaspuns" Margin="0,5" Padding="3"/>
             <Label x:Name="lblLgPunctaj" Content="Punctaj (1-100):"/>
             <TextBox x:Name="txtAddPunctaj" Margin="0,5" Padding="3"/>
-            <Label Content="Dificultate:"/>
-            <ComboBox x:Name="cmbDificultate" Margin="0,5" Padding="5">
-                <ComboBoxItem Content="Ușor" IsSelected="True"/>
-                <ComboBoxItem Content="Mediu"/>
-                <ComboBoxItem Content="Greu"/>
-            </ComboBox>
+            <Label Content="cmbDificultate:"/>
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <RadioButton x:Name="rbUsor" Content="Ușor" IsChecked="True" GroupName="Dificultate" Margin="0,0,20,0"/>
+                <RadioButton x:Name="rbMediu" Content="Mediu" GroupName="Dificultate" Margin="0,0,20,0"/>
+                <RadioButton x:Name="rbGreu" Content="Greu" GroupName="Dificultate"/>
+            </StackPanel>
             <Button Content="Salvează" Click="BtnSalveazaIntrebare_Click" Margin="0,20" Padding="10" Background="#C8E6C9" FontWeight="Bold"/>
         </StackPanel>
 
