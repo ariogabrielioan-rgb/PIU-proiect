@@ -15,6 +15,9 @@ namespace LibrarieModele
         public string RaspunsCorect { get; set; }
         public int Punctaj { get; set; }
         public Dificultate NivelDificultate { get; set; }
+        public string VariantaA { get; set; }
+        public string VariantaB { get; set; }
+        public string VariantaC { get; set; }
 
         // Constructor implicit
         public Intrebare()
@@ -45,18 +48,22 @@ namespace LibrarieModele
             RaspunsCorect = date[2];
             Punctaj = int.Parse(date[3]);
             NivelDificultate = (Dificultate)int.Parse(date[4]);
+            // ADAUGĂ ASTA: Citim variantele dacă ele există în fișier
+            if (date.Length >=8)
+            {
+                VariantaA = date[5];
+                VariantaB = date[6];
+                VariantaC = date[7];
+            }
+
         }
 
         // --- CERINȚA 2: Metodă pentru scrierea în fișier (include Enum-ul) ---
         public string ConversieLaSirPentruFisier()
         {
-            return string.Format("{1}{0}{2}{0}{3}{0}{4}{0}{5}",
-                SEPARATOR_FISIER,
-                Id,
-                (Text ?? string.Empty),
-                (RaspunsCorect ?? string.Empty),
-                Punctaj,
-                (int)NivelDificultate); // Salvăm valoarea numerică a Enum-ului
+            // Pune automat separatorul între TOATE câmpurile pe care le enumeri
+            return string.Join(SEPARATOR_FISIER.ToString(),
+                Id, Text, RaspunsCorect, Punctaj, (int)NivelDificultate, VariantaA, VariantaB, VariantaC);
         }
 
         public string Info()

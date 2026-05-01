@@ -32,7 +32,7 @@ namespace Interface
             listaIntrebari = adminIntrebari.GetIntrebari();
             if (listaIntrebari == null || listaIntrebari.Count == 0)
             {
-                MessageBox.Show("Nu există întrebări!");
+                MessageBox.Show("Nu există întrebări! Adaugă una mai întâi.");
                 return;
             }
 
@@ -49,78 +49,91 @@ namespace Interface
             panelActiv.Visibility = Visibility.Visible;
         }
 
-        // --- ADAUGARE (LOGICA SIMPLĂ) ---
+        // --- ADAUGARE ÎNTREBARE ---
         private void BtnSalveazaIntrebare_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Verificăm textul întrebării
             if (string.IsNullOrWhiteSpace(txtAddText.Text))
             {
-                MessageBox.Show("Eroare: Trebuie să introduci textul întrebării!");
-                return; // Oprim aici dacă e gol
-            }
-
-            // 2. Verificăm răspunsul
-            if (string.IsNullOrWhiteSpace(txtAddRaspuns.Text))
-            {
-                MessageBox.Show("Eroare: Trebuie să introduci un răspuns corect!");
-                return; // Oprim aici dacă e gol
-            }
-
-            // 3. Verificăm punctajul (să nu fie gol)
-            if (string.IsNullOrWhiteSpace(txtAddPunctaj.Text))
-            {
-                MessageBox.Show("Eroare: Trebuie să introduci un punctaj!");
+                MessageBox.Show("Introdu textul întrebării!");
                 return;
             }
-            // 2. Aflăm dificultatea din RadioButtons (Am lăsat-o aici ca să fie clar)
-            Dificultate dif = Dificultate.Usor;
-            if (rbMediu.IsChecked == true) dif = Dificultate.Mediu;
-            if (rbGreu.IsChecked == true) dif = Dificultate.Greu;
+
+            if (string.IsNullOrWhiteSpace(txtAddVarA.Text) ||
+                string.IsNullOrWhiteSpace(txtAddVarB.Text) ||
+                string.IsNullOrWhiteSpace(txtAddVarC.Text))
+            {
+                MessageBox.Show("Completează toate cele 3 variante de răspuns!");
+                return;
+            }
+
+            string raspunsCorectCalculat = "";
+            if (chkAddA.IsChecked == true) raspunsCorectCalculat += "A";
+            if (chkAddB.IsChecked == true) raspunsCorectCalculat += "B";
+            if (chkAddC.IsChecked == true) raspunsCorectCalculat += "C";
+
+            if (string.IsNullOrEmpty(raspunsCorectCalculat))
+            {
+                MessageBox.Show("Bifează cel puțin o variantă ca fiind corectă!");
+                return;
+            }
+
+            Dificultate dif = rbMediu.IsChecked == true ? Dificultate.Mediu :
+                             rbGreu.IsChecked == true ? Dificultate.Greu : Dificultate.Usor;
 
             try
             {
                 int punctaj = int.Parse(txtAddPunctaj.Text);
-                Intrebare noua = new Intrebare(txtAddText.Text, txtAddRaspuns.Text, punctaj, dif);
+                Intrebare noua = new Intrebare(txtAddText.Text, raspunsCorectCalculat, punctaj, dif);
+
+                // IMPORTANT: Aceste proprietăți trebuie să existe în clasa Intrebare
+                noua.VariantaA = txtAddVarA.Text;
+                noua.VariantaB = txtAddVarB.Text;
+                noua.VariantaC = txtAddVarC.Text;
+
                 adminIntrebari.AdaugaIntrebare(noua);
 
-                MessageBox.Show("Salvat!");
+                MessageBox.Show("Salvat cu succes! ✅");
 
-                // Resetăm câmpurile
+                // Resetare câmpuri
                 txtAddText.Clear();
-                txtAddRaspuns.Clear();
+                txtAddVarA.Clear(); txtAddVarB.Clear(); txtAddVarC.Clear();
+                chkAddA.IsChecked = chkAddB.IsChecked = chkAddC.IsChecked = false;
                 txtAddPunctaj.Clear();
                 rbUsor.IsChecked = true;
             }
             catch { MessageBox.Show("Punctajul trebuie să fie un număr!"); }
         }
 
-        // --- QUIZ (LOGICA SIMPLĂ CU VALIDARE) ---
+        // --- LOGICA QUIZ ---
         private void btnNext_Click(object sender, RoutedEventArgs e)
         {
-            // VALIDARE: Dacă nu a scris nimic, dăm eroare și oprim funcția
-            if (string.IsNullOrWhiteSpace(txtRaspunsUtilizator.Text))
+            string raspunsUtilizator = "";
+            if (chkA.IsChecked == true) raspunsUtilizator += "A";
+            if (chkB.IsChecked == true) raspunsUtilizator += "B";
+            if (chkC.IsChecked == true) raspunsUtilizator += "C";
+
+            if (string.IsNullOrEmpty(raspunsUtilizator))
             {
-                MessageBox.Show("Trebuie să introduci un răspuns înainte de a trimite!");
-                return; // "return" oprește funcția aici, deci nu trece la restul codului
+                MessageBox.Show("Bifează măcar o variantă!");
+                return;
             }
 
             var intrebare = listaIntrebari[indexCurent];
 
-            // Verificăm dacă răspunsul e corect
-            if (intrebare.Verifica(txtRaspunsUtilizator.Text))
+            if (intrebare.Verifica(raspunsUtilizator))
             {
                 scorCurent += intrebare.Punctaj;
-                MessageBox.Show("Corect!✅ ");
+                MessageBox.Show("Corect! ✅");
             }
             else
             {
-                MessageBox.Show($"Greșit!❌ Răspunsul corect era: {intrebare.RaspunsCorect}");
+                MessageBox.Show($"Greșit! ❌ Varianta corect era: {intrebare.RaspunsCorect}");
             }
 
-            // Abia după ce a răspuns valid, trecem la următoarea
             indexCurent++;
             AfiseazaIntrebareaCurenta();
         }
+
         private void AfiseazaIntrebareaCurenta()
         {
             if (indexCurent < listaIntrebari.Count)
@@ -130,7 +143,15 @@ namespace Interface
                 lblScorLive.Content = $"Scor: {scorCurent}";
                 txtTextIntrebare.Text = i.Text;
                 lblDificultate.Content = $"Dificultate: {i.NivelDificultate}";
-                txtRaspunsUtilizator.Clear();
+
+                // Punem textele variantelor pe CheckBox-uri
+                // Test de diagnostic:
+                chkA.Content = "A)"+i.VariantaA;
+                chkB.Content = "B)" + i.VariantaB;
+                chkC.Content = "C)" + i.VariantaC;
+
+                // Resetăm bifele pentru noua întrebare
+                chkA.IsChecked = chkB.IsChecked = chkC.IsChecked = false;
             }
             else
             {
